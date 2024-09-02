@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-900 text-gray-200 h-screen flex">
+    <!-- Sidebar -->
+    <div
+      class="w-16 bg-gray-800 text-gray-400 flex flex-col justify-between py-4 space-y-4"
+    >
+      <div class="flex flex-col items-center">
+        <!-- Home Button -->
+        <button class="hover:bg-gray-700 p-2 rounded">
+          <span class="material-icons md-dark">home</span>
+        </button>
+        <!-- API Button -->
+        <button class="hover:bg-gray-700 p-2 rounded">
+          <span class="material-icons md-dark">api</span>
+        </button>
+        <!-- Settings Button -->
+        <button class="hover:bg-gray-700 p-2 rounded">
+          <span class="material-icons md-dark">settings</span>
+        </button>
+      </div>
+      <div class="flex flex-col items-center">
+        <!-- Logout Button -->
+        <button class="hover:bg-gray-700 p-2 mx-2 rounded" id="logoutButton">
+          <span class="material-icons md-dark">logout</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6">
+      <h1 class="text-2xl font-semibold text-white">Dashboard</h1>
+      <p class="text-gray-400 mt-4">Welcome to your URL Shortener dashboard!</p>
+    </div>
+  </body>
+  <script type="module">
+    function handleLogout() {
+      fetch('/logout', {
+        method: 'POST',
+      })
+        .then((response) => {
+          if (response.redirected) {
+            window.location.href = response.url;
+          } else {
+            window.location.href = '/';
+          }
+        })
+        .catch((error) => {
+          console.error('Error during logout:', error);
+        });
+    }
+
+    const logoutButton = document.getElementById('logoutButton');
+    logoutButton.addEventListener('click', handleLogout);
+
+    fetch('/redirects', {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Response data:', data);
+      })
+      .catch((error) => {
+        console.error('There was a problem with the fetch operation:', error);
+      });
+  </script>
+</html>
